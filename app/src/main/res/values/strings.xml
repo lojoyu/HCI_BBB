@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BBB</string>
+
+    <!-- bluetooth -->
+    <string name="no_device">NO DEVICE</string>
+    <string name="add_device">ADD DEVICE</string>
+
 </resources>

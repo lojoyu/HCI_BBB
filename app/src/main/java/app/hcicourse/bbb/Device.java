@@ -14,6 +14,13 @@ public class Device implements Parcelable{
         id = 0;
     }
 
+    public Device(String name, String addr) {
+        this.name = name;
+        this.addr = addr;
+        gps = null;
+        id = 0;
+    }
+
     public void setName(String name){
         this.name = name;
     }
