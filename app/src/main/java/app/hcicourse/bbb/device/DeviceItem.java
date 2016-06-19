@@ -1,6 +1,7 @@
 package app.hcicourse.bbb.device;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +54,19 @@ public class DeviceItem implements Item{
         holder.connectState = (TextView) convertView.findViewById(R.id.txt_connect_state);
 
         holder.name.setText(device.getName());
-        holder.connectState.setText(connectStateToString());
+        holder.connectState.setText("●");
+        switch (connectState) {
+            case(BluetoothState.STATE_CONNECTED):
+                holder.connectState.setTextColor(ContextCompat.getColor(context, R.color.colorGreen));
+                break;
+            case(BluetoothState.STATE_CONNECTING):
+                holder.connectState.setTextColor(ContextCompat.getColor(context, R.color.colorOrange));
+                break;
+            default:
+                holder.connectState.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
+                break;
+        }
+
         Log.d(TAG, "getView: name:"+device.getName()+"/connect"+connectState);
 
         convertView.setTag(holder);

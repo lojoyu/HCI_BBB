@@ -2,10 +2,15 @@ package app.hcicourse.bbb;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +19,11 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 import android.util.Log;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +44,7 @@ import app.hcicourse.bbb.db.DbDeviceQuery;
 import app.hcicourse.bbb.gps.GPSTracker;
 import app.hcicourse.bbb.gps.MapsActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     static final String TAG = "MainActivityLog";
     private static final ScheduledExecutorService worker =
@@ -42,16 +52,24 @@ public class MainActivity extends Activity {
     private ArrayList<Item> adaptList = new ArrayList<Item>();
     private DeviceListAdapter adapter = null;
     private int connectState = BluetoothState.STATE_NONE;
-    private String autoConnectName=null;
+    private String autoConnectName = null;
     private int autoConnectID = 0;
 
     DbDeviceQuery dbDeviceQuery;
-    BluetoothSPP bt;
     GPSTracker gps;
+
+    static public BluetoothSPP bt;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        //getSupportActionBar().setCustomView(R.layout.title_layout);
         setContentView(R.layout.activity_main);
 
         dbDeviceQuery = new DbDeviceQuery(this);
@@ -59,10 +77,10 @@ public class MainActivity extends Activity {
         btInit();
 
         Button addDvBtn = (Button) findViewById(R.id.btn_add_device);
-        addDvBtn.setOnClickListener(new OnClickListener(){
+        addDvBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bt.getServiceState() == BluetoothState.STATE_CONNECTED) {
+                if (bt.getServiceState() == BluetoothState.STATE_CONNECTED) {
                     bt.disconnect();
                 }
                 Intent intent = new Intent(getApplicationContext(), DeviceList.class);
@@ -76,21 +94,40 @@ public class MainActivity extends Activity {
         });
 
         createList();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     public void onStart() {
         super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
         if (!bt.isBluetoothEnabled()) {
             bt.enable();
         } else {
-            if(!bt.isServiceAvailable()) {
+            if (!bt.isServiceAvailable()) {
                 Log.d(TAG, "setupService");
                 bt.setupService();
                 bt.startService(BluetoothState.DEVICE_OTHER);
             }
         }
         setup();
-
+        // dbDeviceQuery.deleteDevice("");
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://app.hcicourse.bbb/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     public void onDestroy() {
@@ -117,7 +154,7 @@ public class MainActivity extends Activity {
         listView.setClickable(true);
 
         adaptList.clear();
-        for(int i=0;i<dvList.size();i++){
+        for (int i = 0; i < dvList.size(); i++) {
             Device dv = dvList.get(i);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
@@ -127,10 +164,14 @@ public class MainActivity extends Activity {
             else map.put("connectState", BluetoothState.STATE_NONE);
             adaptList.add(new DeviceItem(map));
         }
-        if (adaptList.size() <= 0){
+        if (adaptList.size() <= 0) {
             TextView tv = (TextView) findViewById(R.id.txt_no_device);
             listView.setVisibility(View.GONE);
             tv.setVisibility(View.VISIBLE);
+        } else {
+            TextView tv = (TextView) findViewById(R.id.txt_no_device);
+            listView.setVisibility(View.VISIBLE);
+            tv.setVisibility(View.GONE);
         }
 
         adapter = new DeviceListAdapter(this, adaptList);
@@ -138,6 +179,26 @@ public class MainActivity extends Activity {
         listView.setOnItemClickListener(itemOnclickListener);
         listView.setOnItemLongClickListener(new Onlongclick());
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://app.hcicourse.bbb/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 
     private class Onlongclick implements OnItemLongClickListener {
@@ -176,14 +237,14 @@ public class MainActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Item itm = adaptList.get(position);
-            if (itm.getViewType() == DeviceListAdapter.RowType.LIST_ITEM.ordinal()){
+            if (itm.getViewType() == DeviceListAdapter.RowType.LIST_ITEM.ordinal()) {
                 Log.d(TAG, "onItemClick");
                 Device device = ((DeviceItem) itm).getDevice();
                 int dvId = device.getId();
                 //TODO: click device to show gps
-                Log.d(TAG, "id="+Integer.toString(dvId));
+                Log.d(TAG, "id=" + Integer.toString(dvId));
 
-                List<String> gpsStrL = dbDeviceQuery.getStringValue("gps","WHERE id="+Integer.toString(dvId));
+                List<String> gpsStrL = dbDeviceQuery.getStringValue("gps", "WHERE id=" + Integer.toString(dvId));
                 if (gpsStrL.size() != 1) Log.e(TAG, "on itemclick get no gps");
                 double[] gpsD = Device.GPStoDouble(gpsStrL.get(0));
 
@@ -192,7 +253,6 @@ public class MainActivity extends Activity {
                             , "No GPS location recorded"
                             , Toast.LENGTH_SHORT).show();
                 } else {
-
                     Intent googleMap = new Intent(MainActivity.this, MapsActivity.class);
                     //Sending data to another Activity
                     googleMap.putExtra("latitude", gpsD[0]);
@@ -206,7 +266,7 @@ public class MainActivity extends Activity {
     void btInit() {
         bt = new BluetoothSPP(this);
 
-        if(!bt.isBluetoothAvailable()) {
+        if (!bt.isBluetoothAvailable()) {
             Toast.makeText(getApplicationContext()
                     , "Bluetooth is not available"
                     , Toast.LENGTH_SHORT).show();
@@ -223,17 +283,12 @@ public class MainActivity extends Activity {
             @Override
             public void onServiceStateChanged(int state) {
                 Log.d(TAG, "State Change");
-                if (state != connectState) {
-                    if (connectState == BluetoothState.STATE_CONNECTED) {
-                        //TODO: update GPS
-                        updateGPS();
-                        Log.d(TAG, "state not connect!");
-                    }
-                    connectState = state;
-                    createList();
+                if (connectState == BluetoothState.STATE_CONNECTED) {
+                    updateGPS();
+                    Log.d(TAG, "state not connect!");
                 }
-
-
+                connectState = state;
+                createList();
             }
         });
 
@@ -246,7 +301,7 @@ public class MainActivity extends Activity {
                 Device dv = new Device(name, address);
                 autoConnectID = (int) dbDeviceQuery.insertDevice(dv);
                 autoConnectName = name;
-
+                createList();
                 Log.d(TAG, "connect");
 
             }
@@ -255,6 +310,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(getApplicationContext()
                         , "Connection lost", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "connection lost");
+                createList();
 
             }
 
@@ -262,6 +318,7 @@ public class MainActivity extends Activity {
                 Toast.makeText(getApplicationContext()
                         , "Unable to connect", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "unable to connect");
+                createList();
             }
         });
 
@@ -278,13 +335,14 @@ public class MainActivity extends Activity {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
-            if(resultCode == Activity.RESULT_OK) {
+        if (requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
+            if (resultCode == Activity.RESULT_OK) {
                 bt.connect(data);
                 Log.d(TAG, "CONNECT RESULT_OK");
+                Log.d(TAG, "---" + data.getExtras().getString(BluetoothState.DEVICE_NAME));
             }
-        } else if(requestCode == BluetoothState.REQUEST_ENABLE_BT) {
-            if(resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == BluetoothState.REQUEST_ENABLE_BT) {
+            if (resultCode == Activity.RESULT_OK) {
                 Log.d(TAG, "RESULT_OK");
                 bt.setupService();
                 bt.startService(BluetoothState.DEVICE_OTHER);
@@ -302,16 +360,16 @@ public class MainActivity extends Activity {
 
 
         // check if GPS enabled
-        if(gps.canGetLocation()){
+        if (gps.canGetLocation()) {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
             String gpsStr = Device.GPStoString(latitude, longitude);
-            dbDeviceQuery.setStringValue("gps", gpsStr, "id="+Integer.toString(autoConnectID));
+            dbDeviceQuery.setStringValue("gps", gpsStr, "id=" + Integer.toString(autoConnectID));
 
             // \n is for new line
-            Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
-        } else{
+        } else {
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings

@@ -31,17 +31,23 @@
         android:layout_weight=".95">
 
         <Button
-            android:id="@+id/callBtn1"
+            android:id="@+id/callBtnLight"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="call my car 1" />
+            android:text="Light OFF" />
         <Button
-            android:id="@+id/callBtn2"
+            android:id="@+id/callBtnFlag"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="call my car 2" />
+            android:text="Flag OFF" />
+        <Button
+            android:id="@+id/callBtnSong"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Song OFF" />
     </LinearLayout>
 
 </LinearLayout>
