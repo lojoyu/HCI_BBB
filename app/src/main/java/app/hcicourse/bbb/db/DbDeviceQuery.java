@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.hcicourse.bbb.Device;
+import app.hcicourse.bbb.device.Device;
 
 public class DbDeviceQuery {
     private static final String TAG = "bbb.DbDeviceQuery";

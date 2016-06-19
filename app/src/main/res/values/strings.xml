@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">BBB</string>
-    <string name="google_maps_key">BBBGoogleMapKey</string>
+    <!-- google Map -->
     <string name="title_map_message">Google Map</string>
+    <!-- bluetooth -->
+    <string name="no_device">NO DEVICE</string>
+    <string name="add_device">ADD DEVICE</string>
 
 </resources>

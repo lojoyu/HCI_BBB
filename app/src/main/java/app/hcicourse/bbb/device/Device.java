@@ -1,4 +1,4 @@
-package app.hcicourse.bbb;
+package app.hcicourse.bbb.device;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,6 +11,13 @@ public class Device implements Parcelable{
 
     public Device() {
         name = addr = gps = null;
+        id = 0;
+    }
+
+    public Device(String name, String addr) {
+        this.name = name;
+        this.addr = addr;
+        gps = null;
         id = 0;
     }
 
@@ -44,6 +51,20 @@ public class Device implements Parcelable{
 
     public int getId(){
         return id;
+    }
+
+    static public String GPStoString(double lat, double lng) {
+        return Double.toString(lat)+","+Double.toString(lng);
+    }
+
+    static public double[] GPStoDouble(String gpsStr) {
+        if (gpsStr == null) return null;
+
+        String[] arr = gpsStr.split(",");
+        double[] gpsD = new double[2];
+        gpsD[0] = Double.valueOf(arr[0]);
+        gpsD[1] = Double.valueOf(arr[1]);
+        return gpsD;
     }
 
 
