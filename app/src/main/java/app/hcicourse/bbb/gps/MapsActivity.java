@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -53,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Receiving the location Data
         latitude = i.getDoubleExtra("latitude", 0.0);
         longitude = i.getDoubleExtra("longitude", 0.0);
+        Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
         bt = MainActivity.bt;
 
         final Button LightBtn = (Button) findViewById(R.id.callBtnLight);

@@ -16,8 +16,7 @@
             zoom: 14,
             mapTypeId: google.maps.MapTypeId.ROADMAP
             };*/
-            //var map = new google.maps.Map(
-            //    document.getElementById('map_canvas'), mapOptions);
+            //var map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
             var panoramaOptions = {
                 position: fenway,
                 pov: {
@@ -27,7 +26,7 @@
                 }
             };
             var panorama = new  google.maps.StreetViewPanorama(document.getElementById('pano'),panoramaOptions);
-            map.setStreetView(panorama);
+            //map.setStreetView(panorama);
         }
     </script>
   </head>

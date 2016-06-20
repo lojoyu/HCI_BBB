@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         dbDeviceQuery = new DbDeviceQuery(this);
         gps = new GPSTracker(MainActivity.this);
         btInit();
+        insertTestD();
 
         Button addDvBtn = (Button) findViewById(R.id.btn_add_device);
         addDvBtn.setOnClickListener(new OnClickListener() {
@@ -141,7 +142,9 @@ public class MainActivity extends AppCompatActivity {
             autoConnectName = dvL.get(0).getName();
             autoConnectID = dvL.get(0).getId();
             bt.autoConnect(autoConnectName);
+            connectState = bt.getServiceState();
         }
+        createList();
     }
 
     void createList() {
@@ -160,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             HashMap<String, Object> map = new HashMap<String, Object>();
 
             map.put("device", dv);
+            Log.d(TAG, "~~"+connectState);
             if (dv.getName().equals(autoConnectName)) map.put("connectState", connectState);
             else map.put("connectState", BluetoothState.STATE_NONE);
             adaptList.add(new DeviceItem(map));
@@ -340,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
                 bt.connect(data);
                 Log.d(TAG, "CONNECT RESULT_OK");
                 Log.d(TAG, "---" + data.getExtras().getString(BluetoothState.DEVICE_NAME));
+                createList();
             }
         } else if (requestCode == BluetoothState.REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
@@ -347,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
                 bt.setupService();
                 bt.startService(BluetoothState.DEVICE_OTHER);
                 setup();
+
             } else {
                 Toast.makeText(getApplicationContext()
                         , "Bluetooth was not enabled."
@@ -358,24 +364,46 @@ public class MainActivity extends AppCompatActivity {
 
     void updateGPS() {
 
-
         // check if GPS enabled
         if (gps.canGetLocation()) {
             double latitude = gps.getLatitude();
             double longitude = gps.getLongitude();
             String gpsStr = Device.GPStoString(latitude, longitude);
-            dbDeviceQuery.setStringValue("gps", gpsStr, "id=" + Integer.toString(autoConnectID));
+
+            //TODO: remove update
+           // dbDeviceQuery.setStringValue("gps", gpsStr, "id=" + Integer.toString(autoConnectID));
 
             // \n is for new line
-            //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-
+            Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "You leave your car, location has been recorded.", Toast.LENGTH_LONG).show();
         } else {
             // can't get location
             // GPS or Network is not enabled
             // Ask user to enable GPS/network in settings
             gps.showSettingsAlert();
+            Log.d(TAG, "gps not enable");
         }
     }
+    void insertTestD() {
+        dbDeviceQuery.deleteDevice("name='place1' OR name='place2' OR name='place3'");
+        Device dv = new Device();
+        dv.setName("place1");
+        dv.setAddr("123");
+        dv.setGps("25.014417,121.533293");
+        dbDeviceQuery.insertDevice(dv);
 
+        dv.setName("place2");
+        dv.setAddr("1234");
+        dv.setGps("25.025970,121.543244");
+        dbDeviceQuery.insertDevice(dv);
+
+        dv.setName("place3");
+        dv.setAddr("1235");
+        dv.setGps("25.018009,121.534671");
+        dbDeviceQuery.insertDevice(dv);
+
+
+       // dbDeviceQuery.setStringValue("gps", "25.021103,121.5412366", "id=1");
+    }
 }
 
